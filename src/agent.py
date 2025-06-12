@@ -12,6 +12,9 @@ load_dotenv()  # Load environment variables from .env file
 memory = MemorySaver()
 model = ChatOpenAI(model_name="gpt-4-turbo-preview")
 
+# Configuration for conversation history
+CONVERSATION_WINDOW_SIZE = 10  # Number of messages to keep in history
+
 agent_executor = create_react_agent(model, tools, checkpointer=memory)
 
 # Use the agent in a continuous conversation
@@ -47,6 +50,13 @@ print("Starting your financial education session. I'll guide you through learnin
 print("Type 'bye' or 'exit' to end the session.")
 print("=" * 50)
 
+def get_recent_messages(messages_list, window_size):
+    """Get the most recent messages within the window size, always including the system message."""
+    if len(messages_list) <= window_size:
+        return messages_list
+    # Always keep the system message (first message) and the most recent messages
+    return [messages_list[0]] + messages_list[-window_size+1:]
+
 while True:
     # Get user input
     user_input = input("\nYou: ").strip()
@@ -59,10 +69,11 @@ while True:
     # Add user message to history
     messages.append(HumanMessage(content=user_input))
     
-    # Get agent's response
+    # Get agent's response using only recent messages
+    recent_messages = get_recent_messages(messages, CONVERSATION_WINDOW_SIZE)
     final_response = None
     for step in agent_executor.stream(
-        {"messages": messages},
+        {"messages": recent_messages},
         config,
         stream_mode="values",
     ):
