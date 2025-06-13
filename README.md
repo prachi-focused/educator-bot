@@ -10,7 +10,8 @@ educator-bot/
 ├── requirements.txt       # Project dependencies
 ├── src/                   # Source code directory
 │   ├── __init__.py
-│   └── tools.py          # Main implementation of the educator bot
+│   ├── tools.py          # Tools available for the agent to use
+    └── agent.py          # Main implementation of the educator bot
 └── README.md             # Project documentation
 ```
 
@@ -44,7 +45,7 @@ TAVILY_API_KEY=your_tavily_api_key_here
 
 Run the educator bot:
 ```bash
-python src/tools.py
+python src/agent.py
 ```
 
 The bot will start an interactive session where you can:
